@@ -1,0 +1,121 @@
+package com.example.deneme_cizgigrafik;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.WindowManager;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class LineChart extends AppCompatActivity  {
+
+    private static final String TAG="MainActivity";
+    private com.github.mikephil.charting.charts.LineChart grafik_cizgi;
+
+    List<Integer> tarih_modelList;
+
+
+    ArrayList<Entry> yd_egeri=new ArrayList<>();
+    List<String> gunler=new ArrayList<>();
+
+
+    private TextView text_ortalama;
+    private int toplam;
+    private Random random;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_line_chart);
+
+
+        grafik_cizgi=findViewById(R.id.grafik_cizgi);
+        tarih_modelList=new ArrayList<>();
+        grafik_cizgi.setDragEnabled(true);
+        grafik_cizgi.setScaleEnabled(false);
+
+        random=new Random();
+
+
+
+        YAxis leftaxis =grafik_cizgi.getAxisLeft();
+        leftaxis.removeAllLimitLines();
+        leftaxis.enableGridDashedLine(10f,10f,0f);
+        leftaxis.setDrawLimitLinesBehindData(true);
+
+
+        grafik_cizgi.getAxisRight().setEnabled(false);
+
+        for (int i=0;i<7;i++){
+            int a =random.nextInt(20);
+
+            yd_egeri.add(new Entry(i,a));
+        }
+
+
+        gunler.add("Pazartesi");
+        gunler.add("Salı");
+        gunler.add("Çarşamba");
+        gunler.add("Perşembe");
+        gunler.add("Cuma");
+        gunler.add("Cumartesi");
+        gunler.add("Pazar");
+
+
+
+        LineDataSet set1=new LineDataSet(yd_egeri , "Günlük Soru Çözüm Grafiği");
+        set1.setFillAlpha(110);
+        set1.setColor(Color.RED);
+        set1.setLineWidth(3f);
+        set1.setValueTextSize(10f);
+
+        ArrayList<ILineDataSet> dataSets =new ArrayList<>();
+        dataSets.add(set1);
+
+        LineData data=new LineData(dataSets);
+        grafik_cizgi.setData(data);
+
+
+        XAxis axis=grafik_cizgi.getXAxis();
+        axis.setValueFormatter(new MyAxissValueFormatter(gunler));
+        axis.setGranularity(1);
+        axis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+
+    }
+
+    public class MyAxissValueFormatter implements IAxisValueFormatter {
+        private List<String> mvalues;
+
+        public MyAxissValueFormatter(List<String> mvalues) {
+            this.mvalues = mvalues;
+        }
+
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            return mvalues.get((int) value);
+        }
+    }
+}
+ /* for (int i=0;i<7;i++){//son 7 günü getirip ekliyoruz
+        yd_egeri.add(new Entry(i,tarih_modelList.get(tarih_modelList.size()-(7-i)).getToplam_soru()));
+        }
+
+        for (int i=0;i<7;i++){
+        gunler.add(tarih_modelList.get(tarih_modelList.size()-(7-i)).getTarih().substring(0,5));
+        }*/
